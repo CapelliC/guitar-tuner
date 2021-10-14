@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Tuner</title>
+    <script src='https://cdn.jsdelivr.net/gh/keithwhor/audiosynth/audiosynth.js'></script>
+    <style>
+      /* see https://stackoverflow.com/q/45224246/874024 */
+      .aligned_form {
+        display: flex;
+        flex-flow: column wrap;
+        align-content: flex-start;
+        height: 75px;
+      }
+      label, input, select {
+        padding: 5px;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Tuner</h1>
+
+    <div class=aligned_form>
+      <label for=instrument>Instrument</label>
+      <select id=instrument>
+        <option value=piano>Piano</option>
+        <option value=organ>Organ</option>
+        <option value=acoustic selected>Acoustic Guitar</option>
+        <option value=edm>Edm</option>
+      </select>
+
+      <label for=tuning>Tuning</label>
+      <select id=tuning>
+        <option value=0>Standard</option>
+        <option value=1>Lower D</option>
+      </select>
+
+      <label for=repeat_times>Repeat</label>
+      <input  id=repeat_times type=number value=5 size=1>
+      
+      <label for=repeat_pause>Pause</label>
+      <input  id=repeat_pause type=number value=2 size=1>
+
+      <label for=tempo_bpm>Tempo (BPM)</label>
+      <select id=tempo_bpm>
+      </select>
+    </div>
+    
+    <div>
+      <button onClick=play_now()>Play Now</button>
+    </div>
+  </body>
+  <script>
+
+    function metronome_bpm_options() {
+      const metronome_bpm = `
+        40 42 44 46 48 50 52 54 56 58 60
+        63 66 69 72
+        76 80 84 88 92 96 100 104 108 112 116 120
+        126 132 138 144
+        144 152 160 168 176 184 192 200 208`;
+      return [...metronome_bpm.matchAll(/\d+/g)].map(v => '<option>'+v[0]+'</option>').join('')
+    }
+
+    const selects = [instrument,tuning,tempo_bpm]
+    const integers = [repeat_times,repeat_pause]
+    const all_choices = () => selects.concat(integers)
+    
+    function save_user_choices() {
+      for (const e of all_choices())
+        localStorage.setItem(e.id, e.value)
+    }
+    
+    window.onload = function() {
+      tempo_bpm.innerHTML = metronome_bpm_options()
+
+      for (const e of all_choices()) {
+        e.onchange = save_user_choices
+        
+        let c = localStorage.getItem(e.id)
+        if (c !== null)
+          e.value = c
+      }
+    }
+    
+    function play_now() {
+      const instr = () => Synth.createInstrument(instrument.value)
+
+      const tempo_bpm_ms = () => 1000 * 60 / tempo_bpm.value
+      
+      const tunes = [
+        [ ['E', 3],
+          ['A', 3],
+          ['D', 4],
+          ['G', 4],
+          ['B', 4],
+          ['E', 5],
+        ],
+        [ ['D', 3],
+          ['A', 3],
+          ['D', 4],
+          ['G', 4],
+          ['B', 4],
+          ['E', 5],
+        ],
+      ]
+      var repeatc = 0
+      var pausec = 0
+      var note = 0
+      
+      function interval() {
+        let replay = true
+        const N = tunes[tuning.value][note++]
+
+        if (N === undefined) {
+          if (pausec + 1 >= repeat_pause.value) {
+            if (repeatc + 1 >= repeat_times.value) {
+              replay = false
+            } else {
+              repeatc++
+              pausec = 0
+              note = 0
+            }
+          } else {
+            pausec++
+          }
+        } else {
+          instr().play(N[0], N[1], tempo_bpm_ms() / 1000)
+        }
+        if (replay)
+          setTimeout(interval, tempo_bpm_ms())
+      }
+      interval()
+    }
+    
+  </script>
+</html>
