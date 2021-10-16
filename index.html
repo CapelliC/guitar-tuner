@@ -1,55 +1,59 @@
 <!DOCTYPE html>
 <html>
+  <!--
+    Simple HTML5 guitar tuner
+    author: Capelli Carlo
+    license: MIT
+  -->
   <head>
     <meta charset="utf-8">
-    <title>Tuner</title>
+    <title>Guitar Tuner</title>
     <script src='https://cdn.jsdelivr.net/gh/keithwhor/audiosynth/audiosynth.js'></script>
-    <style>
-      /* see https://stackoverflow.com/q/45224246/874024 */
-      .aligned_form {
-        display: flex;
-        flex-flow: column wrap;
-        align-content: flex-start;
-        height: 75px;
-      }
-      label, input, select {
-        padding: 5px;
-        box-sizing: border-box;
-      }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.min.css" integrity="sha512-xiunq9hpKsIcz42zt0o2vCo34xV0j6Ny8hgEylN3XBglZDtTZ2nwnqF/Z/TTCc18sGdvCjbFInNd++6q3J0N6g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   </head>
   <body>
-    <h1>Tuner</h1>
 
-    <div class=aligned_form>
-      <label for=instrument>Instrument</label>
-      <select id=instrument>
-        <option value=piano>Piano</option>
-        <option value=organ>Organ</option>
-        <option value=acoustic selected>Acoustic Guitar</option>
-        <option value=edm>Edm</option>
-      </select>
+    <div class=container>
+      <div class=row>
+        <div class=column>
+          <label for=instrument>Instrument</label>
+          <select id=instrument>
+            <option value=piano>Piano</option>
+            <option value=organ>Organ</option>
+            <option value=acoustic selected>Acoustic Guitar</option>
+            <option value=edm>Edm</option>
+          </select>
+        </div>
 
-      <label for=tuning>Tuning</label>
-      <select id=tuning>
-        <option value=0>Standard</option>
-        <option value=1>Lower D</option>
-      </select>
+        <div class=column>
+          <label for=tuning>Tuning</label>
+          <select id=tuning>
+            <option value=0>Standard</option>
+            <option value=1>Lower D</option>
+          </select>
+        </div>
+      </div>
 
-      <label for=repeat_times>Repeat</label>
-      <input  id=repeat_times type=number value=5 size=1>
-      
-      <label for=repeat_pause>Pause</label>
-      <input  id=repeat_pause type=number value=2 size=1>
+      <div class=row>
+        <div class=column>
+          <label for=repeat_times>Repeat</label>
+          <input  id=repeat_times type=number value=5 size=1>
+        </div>
+        
+        <div class=column>
+          <label for=repeat_pause>Pause</label>
+          <input  id=repeat_pause type=number value=2 size=1>
+        </div>
 
-      <label for=tempo_bpm>Tempo (BPM)</label>
-      <select id=tempo_bpm>
-      </select>
+        <div class=column>
+          <label for=tempo_bpm>Tempo (BPM)</label>
+          <select id=tempo_bpm></select>
+        </div>
+      </div>
+        
+      <button class=button onClick=play_now()>Play Now</button>
     </div>
-    
-    <div>
-      <button onClick=play_now()>Play Now</button>
-    </div>
+
   </body>
   <script>
 
